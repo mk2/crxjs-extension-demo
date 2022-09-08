@@ -1,20 +1,36 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import { ChakraProvider } from "@chakra-ui/react";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./content.css";
 
-const html = document.querySelector('html')
-const app = document.createElement('div')
+const html = document.querySelector("html");
+const root = document.createElement("div");
 
-app.attachShadow({mode: 'open'})
-app.id = 'app-root'
+root.attachShadow({ mode: "open" });
+root.id = "shadow-root";
 
 if (html) {
-  html.append(app)
+  html.append(root);
 }
 
-ReactDOM.createRoot(app.shadowRoot as unknown as HTMLElement).render(
+const appRoot = document.createElement("main");
+appRoot.id = "app-root";
+(root.shadowRoot as any).appendChild(appRoot);
+
+const cache = createCache({
+  key: "C",
+  container: appRoot,
+});
+
+ReactDOM.createRoot(appRoot as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <CacheProvider value={cache}>
+      <ChakraProvider>
+        <App />
+      </ChakraProvider>
+    </CacheProvider>
   </React.StrictMode>
-)
+);
